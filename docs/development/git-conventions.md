@@ -46,6 +46,21 @@ main ← staging ← dev ← feat/*, fix/*, refactor/*, chore/*, …
   [roadmap](../roadmap.md). A change to an architectural choice starts with an
   [ADR](../decisions/README.md).
 
+## Hooks
+
+`npm install` points Git at `.githooks/`: three shell scripts, no library. Never skip them with `--no-verify`.
+
+| Hook | Does |
+|------|------|
+| `pre-commit` | Refuses protected branches and the wrong identity; formats and lints staged files; type-checks |
+| `commit-msg` | Refuses AI attribution and a first line outside the [format](#commit-messages) |
+| `pre-push` | Refuses pushes to protected branches, except promotions, and other emails; runs `npm run check` |
+
+- In each clone: `git config --local user.email <your public email>`.
+- Secrets are GitHub's job: secret scanning and push protection are on. They catch known providers' tokens, not
+  every private key or password, so still read the diff.
+- The types and scopes below are copied in `.githooks/commit-msg`: change both together.
+
 ## Commit messages
 
 [Conventional Commits](https://www.conventionalcommits.org/):
@@ -97,7 +112,7 @@ One concern per PR, into `dev`. Its title is in commit format; its description s
 
 Before asking for a merge:
 
-- [ ] `npm run check` passes (until it exists: `npm run lint`, `npx tsc --noEmit`, `npm run build`)
+- [ ] `npm run check` passes
 - [ ] No AI attribution anywhere in the commits or the PR
 - [ ] No secrets, personal data or private URLs: the repository is public
 - [ ] Authorization is enforced on the server and tested with a non-member

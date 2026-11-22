@@ -1,11 +1,12 @@
 # Testing
 
-How the suites are run and written. The short rules are in `AGENTS.md` §4. The tools below are proposed and are
-installed in M0. There is no CI: run them by hand.
+How the suites are run and written. The short rules are in `AGENTS.md` §4. The static tools are installed
+([what they enforce](code-conventions.md#9-enforcement)); the others are proposed and are installed in M0.
+There is no CI: run them by hand.
 
 | Level | Tool | Covers | Runs |
 | --- | --- | --- | --- |
-| Static | ESLint, TypeScript, formatter | Style, types, import boundaries | Before every PR |
+| Static | Prettier, ESLint, TypeScript | Style, types, import boundaries | Every commit or push |
 | Unit | Vitest | Rules, schemas, dates, ordering, permissions | Before every PR |
 | Integration | Vitest with Cloudflare's Workers pool | DAL, SQL, migrations, jobs, bindings in use | Before every PR |
 | End to end | Playwright against a Workers preview | Core journeys | Before every PR |

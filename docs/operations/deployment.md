@@ -27,7 +27,8 @@ Deploy only from a clean checkout of the pushed branch. Branch rules:
 Run on the commit being deployed:
 
 1. `npm ci`
-2. `npm run check`: formatting, lint, type check, unit and integration tests
+2. `npm run check`: [the static checks and build](../development/code-conventions.md#9-enforcement), plus unit and
+   integration tests once they exist
 3. The OpenNext build and its bundle size
 4. End-to-end and [smoke tests](../development/testing.md#workers-smoke-test) in workerd
 

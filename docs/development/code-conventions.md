@@ -15,7 +15,7 @@ uses lives in that route; code several routes use lives at the root. Folders are
 
 ```
 app/                        # routing, and what only one route uses
-├── layout.tsx, globals.css, favicon.ico
+├── layout.tsx, favicon.ico
 ├── (marketing)/            # public pages
 ├── (auth)/sign-in/         # route groups don't change the URL
 ├── (app)/                  # signed-in pages, sharing one layout
@@ -27,7 +27,7 @@ app/                        # routing, and what only one route uses
 │       └── _components/    # used only by this segment
 └── api/                    # route.ts: auth, files, external callers
 components/                 # shared components
-└── ui/                     # primitives with no domain knowledge
+└── ui/                     # primitives with no domain knowledge, from shadcn/ui
 data/                       # Data Access Layer, one module per resource: data/tasks.ts
 db/
 ├── client.ts, schema.ts
@@ -39,6 +39,7 @@ lib/                        # what is neither UI nor data
 ├── errors.ts, actions.ts, http.ts, pagination.ts, logging.ts
 ├── email.ts, storage.ts    # one wrapper per service, written when that service arrives
 └── schemas/                # field types and per-resource schemas and DTOs, safe on the client
+styles/                     # global CSS: globals.css, imported by the root layout
 public/                     # static files
 tests/                      # integration/<resource>.test.ts, e2e/
 workers/<worker>/           # jobs (M4), realtime (M8)
@@ -144,15 +145,33 @@ routes and file bodies are the exceptions.
 
 ## 6. Coding standard
 
-- Absolute imports only (`@/…`), all at the top of the file; `import type` for types.
+- Absolute imports only (`@/…`), all at the top of the file; `import type` for types. ESLint orders them:
+  Node, packages, then `@/`, each group alphabetical.
 - 2 spaces, double quotes, semicolons, lines up to 120 characters.
 - `strict` TypeScript with explicit return types on exported server functions. No `any`, non-null `!`,
   `@ts-ignore` or `eslint-disable`: fix the code.
 - A closed set is one `as const` array, with the type, schema and SQL check derived from it.
 - Named exports, except where Next.js requires a default.
 - Name required-but-unused arguments with a leading `_`.
-- Prefer the platform to a small package.
+- Keep [dependencies](#dependencies) few.
 - npm only. Pin Next.js, OpenNext and Wrangler exactly; upgrade them in their own PR.
+
+### Dependencies
+
+One developer maintains this, and each package is something to update, audit and understand. Before proposing
+one, stop at the first of these that does the job:
+
+1. What the project already has.
+2. The platform: CSS, Web APIs, Node, Git, GitHub, Cloudflare.
+3. What an installed package already offers, plugins bundled with it included.
+4. A few lines of our own code, unless it is security-sensitive (auth, crypto).
+5. A new package, with the owner's approval: say why 1 to 4 fail and how many packages it adds.
+
+- Never two packages for one job: replacing one removes the other in the same change.
+- Install when code first uses it, and uninstall when nothing does.
+- A command-line tool that is rarely used runs through `npx` at a pinned version.
+- `.npmrc` refuses releases younger than 7 days (npm 11.10 and later). For an urgent security fix, install that one
+  package with `--min-release-age=0`.
 
 ### Naming
 
@@ -215,6 +234,7 @@ Log with `getLogger`, never `console`. Every line of a request carries `request_
 Read the bundled guide in `node_modules/next/dist/docs/` before using an API.
 
 - Server Components by default; `"use client"` on the smallest component that needs it.
+- Links are typed (`typedRoutes`): a path that isn't a route fails the type check.
 - `params`, `searchParams`, `cookies()` and `headers()` are async. Request-time and uncached reads go
   inside `<Suspense>`.
 - Actions are for UI mutations only, never for fetching what a page renders. Never mutate during render.
@@ -228,6 +248,9 @@ Read the bundled guide in `node_modules/next/dist/docs/` before using an API.
 ## 8. UI
 
 - Semantic tokens from the [theme](../brand/theme.md), never raw hex. 360 px and up, light and dark.
+- Add a primitive with `npx shadcn@4.23.0 add <name>` when a feature needs it, install what it imports, then
+  [review it against the theme](../brand/theme.md#adding-a-shadcn-component). Merge classes with `cn` from the
+  `cn` package; there is no `lib/utils.ts`, and `shadcn init` is never run again.
 - Native elements first. Every control has an accessible name and visible focus.
 - Never status by color alone; every drag has a keyboard alternative; respect reduced motion.
 - Each route has loading, empty, error and not-found states.
@@ -250,9 +273,18 @@ The app is English only for now, with i18n to come. These rules keep adding lang
 
 ## 9. Enforcement
 
-There is no CI: `npm run check` (from M0) is run by hand before every pull request and deploy. It runs format, lint, type check and every test suite. Lint is set up to fail on
-unused code, commented-out code, relative imports, `console` and the import boundaries above. Until then
-run `npm run lint`, `npx tsc --noEmit` and `npm run build`.
+There is no CI. `npm run check` runs Prettier, ESLint, the type check, the `AGENTS.md` line limit and a build; the
+[Git hooks](git-conventions.md#hooks) run it for you. `npm run fix` fixes format, class order, imports and unused
+imports. Test suites join the check in M0.
+
+`eslint.config.mjs` is the list of what lint enforces, using only the plugins that come with `eslint-config-next`.
+A rule that is wrong is changed there, never silenced where it fires.
+
+Everything else here is checked by reading the diff: authorization, validation, unused exports, commented-out code,
+file names, logging, who reads the environment, logical CSS and accessibility beyond the basics.
+
+ESLint stays on 9, although it is end-of-life, until the plugins in `eslint-config-next` release support for 10:
+on 10, `import/order` crashes on any file it needs to report.
 
 ## 10. Checklists
 

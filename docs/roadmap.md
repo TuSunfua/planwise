@@ -25,12 +25,13 @@ flowchart LR
 - [ ] Configure the Static Assets incremental cache and prove a page works in workerd
 - [ ] Prove a Server Action and `refresh()` work in workerd
 - [ ] Read `APP_URL` only through `lib/config.ts`
-- [ ] Align `@types/node` with Node 22 and declare `engines`
+- [x] Align `@types/node` with Node 22 and declare `engines`
 - [x] Create the `dev` and `staging` branches
 - [x] On GitHub, protect `main`, `staging` and `dev` and enable private vulnerability reporting
-- [ ] Add formatting, type check, test runners, `npm run check` and the deploy scripts
-- [ ] Make the checks fail on relative imports, dead code, `console`, broken import boundaries and an `AGENTS.md` of 200 lines or more
-- [ ] Implement the [theme](brand/theme.md) in `app/globals.css`, with the flash-free theme switch
+- [x] Add formatting, type check, Git hooks and `npm run check`
+- [ ] Add the test runners to `npm run check`, and the deploy scripts
+- [x] Make the checks fail on relative imports, unused imports and variables, `console`, broken import boundaries and an `AGENTS.md` of 200 lines or more
+- [ ] Implement the [theme](brand/theme.md) in `styles/globals.css`, with the flash-free theme switch
 - [x] Remove scaffold content; set the title, description and `app/favicon.ico`
 - [ ] Load Nunito Sans, including the Vietnamese subset, and Geist Mono
 - [ ] Add the web app manifest and Apple touch icon

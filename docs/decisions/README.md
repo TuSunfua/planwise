@@ -11,6 +11,7 @@
 | [0007](0007-free-cost-external-email.md) | Keep the cost at zero, with an external email sender | Accepted |
 | [0008](0008-resend-and-turnstile.md) | Send with Resend, protect its quota with Turnstile | Accepted |
 | [0009](0009-services-when-needed.md) | Add each service when the app first needs it | Accepted |
+| [0010](0010-shadcn-ui.md) | Build UI primitives with shadcn/ui | Accepted |
 
 ## Process
 

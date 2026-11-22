@@ -1,0 +1,7 @@
+# Markdown is wrapped by hand, and next dev rewrites blocks of AGENTS.md.
+*.md
+package-lock.json
+next-env.d.ts
+db/migrations/
+public/
+styles/shadcn.css

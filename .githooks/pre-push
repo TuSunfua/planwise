@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+fail() {
+  echo "✗ $1" >&2
+  exit 1
+}
+
+check=
+while read -r _ sha ref _; do
+  case "$ref" in
+  refs/heads/dev) fail "Never push to dev: open a pull request." ;;
+  refs/heads/staging) [ "$sha" = "$(git rev-parse origin/dev)" ] || fail "staging only takes origin/dev." ;;
+  refs/heads/main) [ "$sha" = "$(git rev-parse origin/staging)" ] || fail "main only takes origin/staging." ;;
+  *)
+    [ -n "$(echo "$sha" | tr -d 0)" ] || continue # a deletion
+    email=$(git config --local user.email) || fail "Run: git config --local user.email <your public email>"
+    if git log --format='%ae%n%ce' "$sha" --not --remotes | grep -qvxF "$email"; then
+      fail "A new commit has another email. A push is public for good."
+    fi
+    [ "$(git rev-parse "$sha^{commit}")" = "$(git rev-parse HEAD)" ] || fail "Check out what you are pushing."
+    check=1
+    ;;
+  esac
+done
+
+[ -n "$check" ] || exit 0
+[ -z "$(git status --porcelain)" ] || fail "Commit or stash first: the checks read the working tree."
+command -v node >/dev/null || PATH="$(ls -d "$HOME"/.nvm/versions/node/*/bin | sort -V | tail -n 1):$PATH"
+npm run check </dev/null

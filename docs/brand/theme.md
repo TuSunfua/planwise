@@ -40,9 +40,9 @@ Daybreak takes its calm, paper-like style from Sunsama. Borrow the feel only: ne
 1. Components use semantic tokens only, never hex values or scale steps.
 2. Tokens change with the theme, so components rarely need a `dark:` variant.
 3. Color never carries meaning alone. Add text or an icon.
-4. Text uses a text token, or the `on-*` token that belongs to its fill.
-5. `border` is decorative. Anything interactive uses `border-strong`.
-6. Never put white text on Sunrise; it fails contrast. Use `on-primary`.
+4. Text uses a text token, or the `*-foreground` or `on-*` token that belongs to its fill.
+5. `border` is decorative. Anything interactive uses `input`.
+6. Never put white text on Sunrise; it fails contrast. Use `primary-foreground`.
 7. A new pairing needs at least 4.5:1 for text and 3:1 for controls and focus.
 
 ## Scales
@@ -65,7 +65,7 @@ These are raw values for defining tokens, illustrations and marketing.
 
 ## Semantic tokens
 
-In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-surface` and `text-muted`.
+In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-card` and `text-muted-foreground`. The names follow [shadcn/ui](../decisions/0010-shadcn-ui.md): `muted` and `accent` are fills, never text or progress.
 
 ### Surfaces
 
@@ -73,9 +73,9 @@ In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-s
 | --- | --- | --- | --- |
 | `background` | `#FAF9F7` | `#1E1C1A` | Main canvas behind cards |
 | `sidebar` | `#F6F5F1` | `#171614` | Navigation, warm paper |
-| `surface` | `#FFFFFF` | `#282623` | Cards, task rows, inputs |
-| `surface-subtle` | `#F2F1EC` | `#2F2D29` | Hover, count and time chips |
-| `surface-raised` | `#FFFFFF` | `#33302C` | Menus, dialogs, popovers |
+| `card` | `#FFFFFF` | `#282623` | Cards, task rows, inputs |
+| `muted` | `#F2F1EC` | `#2F2D29` | Hover, count and time chips |
+| `popover` | `#FFFFFF` | `#33302C` | Menus, dialogs, popovers |
 | `selected` | `#EAE8E1` | `#37342F` | Selected row, active navigation |
 | `overlay` | `rgb(48 43 36 / 0.32)` | `rgb(0 0 0 / 0.6)` | Behind dialogs |
 
@@ -84,7 +84,7 @@ In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-s
 | Token | Light | Dark | Use |
 | --- | --- | --- | --- |
 | `foreground` | `#3D3A34` | `#F2EFE9` | Main text |
-| `muted` | `#625F58` | `#B3AEA5` | Secondary text, placeholders |
+| `muted-foreground` | `#625F58` | `#B3AEA5` | Secondary text, placeholders |
 | `link` | `#8F3F00` | `#FDB476` | Links, active navigation text |
 
 ### Lines
@@ -92,8 +92,8 @@ In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-s
 | Token | Light | Dark | Use |
 | --- | --- | --- | --- |
 | `border` | `#EAE8E2` | `#35322E` | Decorative dividers only |
-| `border-strong` | `#87847B` | `#8E887F` | Inputs, checkboxes, control outlines |
-| `focus` | `#BE5700` | `#FA923C` | Focus ring |
+| `input` | `#87847B` | `#8E887F` | Inputs, checkboxes, control outlines |
+| `ring` | `#BE5700` | `#FA923C` | Focus ring |
 
 ### Actions
 
@@ -102,13 +102,28 @@ In Tailwind 4 each token becomes `--color-<token>`, giving classes such as `bg-s
 | `primary` | `#FA923C` | `#FA923C` | Main button, checked control |
 | `primary-hover` | `#FFA65C` | `#FFA65C` | Hovered main button |
 | `primary-pressed` | `#EF8732` | `#EF8732` | Pressed main button |
-| `on-primary` | `#2B1A0D` | `#2B1A0D` | On any primary fill |
-| `accent` | `#55C783` | `#55C783` | Progress, completion moments |
-| `on-accent` | `#0E2E1B` | `#0E2E1B` | On accent |
+| `primary-foreground` | `#2B1A0D` | `#2B1A0D` | On any primary fill |
+| `progress` | `#55C783` | `#55C783` | Progress, completion moments |
+| `progress-foreground` | `#0E2E1B` | `#0E2E1B` | On progress |
 | `highlight` | `#FFE3C7` | `#4C301B` | Today marker, use sparingly |
 | `on-highlight` | `#6E3000` | `#FFD2AA` | On highlight |
 | `destructive` | `#B83227` | `#F59A8F` | Delete button |
 | `on-destructive` | `#FFFFFF` | `#3A100C` | On destructive |
+
+### shadcn/ui roles
+
+Components from shadcn/ui also expect these. Each takes the value of another token.
+
+| Token | Same as |
+| --- | --- |
+| `card-foreground`, `popover-foreground`, `accent-foreground`, `sidebar-accent-foreground` | `foreground` |
+| `secondary` | `card` |
+| `secondary-foreground`, `sidebar-foreground` | `muted-foreground` |
+| `accent` | `muted` |
+| `sidebar-accent` | `selected` |
+| `sidebar-primary`, `sidebar-primary-foreground` | `primary`, `primary-foreground` |
+| `sidebar-border` | `border` |
+| `sidebar-ring` | `ring` |
 
 ### Feedback
 
@@ -156,7 +171,7 @@ Users pick from these eight. The database stores the key, never a hex value, so 
 | `urchin` | `#7E5BE0` | `#EEE9FF` | `#55389F` | `#312C44` | `#BEAFEA` |
 | `pebble` | `#7B786F` | `#EFEEE9` | `#55524B` | `#33302C` | `#C4BFB6` |
 
-Tokens are `palette-<key>-mark`, `palette-<key>` and `palette-<key>-foreground`. Show a project as a `mark` colored `#` followed by its name in `muted`. Use fill and text only for label chips. The default is `ocean`.
+Tokens are `palette-<key>-mark`, `palette-<key>` and `palette-<key>-foreground`. Show a project as a `mark` colored `#` followed by its name in `muted-foreground`. Use fill and text only for label chips. The default is `ocean`.
 
 ## Layout
 
@@ -166,33 +181,46 @@ Tokens are `palette-<key>-mark`, `palette-<key>` and `palette-<key>-foreground`.
 | Main | Inset panel on `background`, 10 px corners | Same | Full screen |
 | Toolbar | 54 px, outline buttons left, main action right | Same | Title and add button |
 | Upcoming | Day columns, 272 px, scrolling sideways | Day columns | One day after another |
-| Task detail | 312 px right pane on `surface` | Overlay sheet | Full screen |
+| Task detail | 312 px right pane on `card` | Overlay sheet | Full screen |
 
 ## Components
 
 | Component | Treatment |
 | --- | --- |
-| Main button | Pill, `primary` with `on-primary`, weight 750 |
-| Secondary button | `surface`, `border`, 6 px corners, `muted` text and icon |
-| Navigation item | 34 px, line icon, `muted`; active is `selected` with bold `foreground` |
-| Day header | Day name, muted date and count, 6 px `accent` progress bar |
+| Main button | Pill, `primary` with `primary-foreground`, weight 750 |
+| Secondary button | `secondary` with `secondary-foreground` text and icon, `border`, 6 px corners |
+| Navigation item | 34 px, line icon, `muted-foreground`; active is `selected` with bold `foreground` |
+| Day header | Day name, muted date and count, 6 px `progress` bar |
 | Add task | A white card at the top of each column, plus sign and muted label |
-| Task card | `surface`, 12 px padding, 8 px gap, card shadow |
+| Task card | `card`, 12 px padding, 8 px gap, card shadow |
 | Card content | Optional date chip, title, subtasks, then a row with check, priority and project |
 | Check | 20 px circle, 16 px for subtasks, with a hit area of at least 44 px on touch screens |
 | Icons | Outline, 1.5 px stroke, rounded ends, in the current text color |
+
+## Adding a shadcn component
+
+`npx shadcn@4.23.0 add <name>` copies the source into `components/ui/`. Install what it imports and run
+`npm run fix`. Its colors already follow the theme. Fix these before using it, because the downloaded defaults break
+the rules above:
+
+- Focus: replace `outline-none` and `ring-ring/50` with the solid focus state below. At half opacity it fails 3:1.
+- Text in `text-primary` (the link variant): use `link`. Sunrise text fails contrast on light surfaces.
+- Control outlines in `border-border`: use `input`.
+- Error and destructive text: use `danger`, and check it on its fill in both modes.
+- Shape and size: pill main button, the corners above, and 44 px primary touch targets.
+- Palette colors such as `bg-black/10` behind dialogs: use a token, here `overlay`. Lint refuses them.
 
 ## Component states
 
 | State | Treatment |
 | --- | --- |
-| Hover | `surface-subtle` for rows, `primary-hover` for main buttons |
+| Hover | `muted` for rows, `primary-hover` for main buttons |
 | Pressed | `primary-pressed` for main buttons |
 | Selected | `selected` plus a check, bar or bolder text |
-| Focus | 2 px `focus` ring with a 2 px offset |
+| Focus | 2 px `ring` with a 2 px offset |
 | Disabled | 50% opacity, with the reason available as text |
 | Error | `danger` border, icon and message |
-| Completed task | `muted` title and a filled check |
+| Completed task | `muted-foreground` title and a filled check |
 | Overdue | `danger` on `danger-soft`, labeled "Overdue" |
 | Due today | `warning` on `warning-soft`, labeled "Due today" |
 
@@ -232,8 +260,8 @@ Inputs are at least 16 px on mobile to prevent zoom on focus.
 | --- | --- | --- |
 | Panel | `border`, no shadow | `border`, no shadow |
 | Card | `0 1px 1px rgb(48 43 36 / 0.12), 0 0 0 1px rgb(48 43 36 / 0.035)` | `border`, no shadow |
-| Popover | `0 4px 14px rgb(48 43 36 / 0.12)` | `surface-raised` and `border` |
-| Dialog | `0 8px 28px rgb(48 43 36 / 0.18)` | `surface-raised`, `border` and `overlay` |
+| Popover | `0 4px 14px rgb(48 43 36 / 0.12)` | `popover` and `border` |
+| Dialog | `0 8px 28px rgb(48 43 36 / 0.18)` | `popover`, `border` and `overlay` |
 
 ## Motion
 

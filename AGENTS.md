@@ -40,13 +40,17 @@ docs credits an AI or tool. No `Co-Authored-By` for a bot, no "Generated with". 
 
 D1 (from M1) is the only source of truth. R2 (from M4) holds files only.
 
+- **Keep it simple: one developer maintains this.** The fewest libraries, files and settings that do the job
+  well. Never add a library for what the project, the platform or an installed package already does, or a second one
+  like it; install nothing before code uses it (`docs/development/code-conventions.md#dependencies`).
 - Build only the requested milestone; no Phase 2 features during Phase 1.
 - **Add a service only when a feature needs it:** no binding, account, resource or environment ahead of its milestone
   (`docs/platform/cloudflare.md#services`).
 - **Design for the Free plan:** 10 ms CPU per request, 50 D1 queries per invocation, daily quotas. Keep renders small,
   push work into SQL or the client, and never assume a paid feature.
-- Ask before adding a dependency, a service or anything that can bill. The email sender is the only infrastructure
-  outside Cloudflare, reached only through `lib/email.ts`. Sign-in is by emailed code only, open to everyone.
+- Ask before adding a dependency (however broad the request), a service or anything that can bill. The email sender is
+  the only infrastructure outside Cloudflare, reached only through `lib/email.ts`. Sign-in is by emailed code only,
+  open to everyone.
 - Never deploy, run a remote migration or change a remote resource without explicit approval.
 - The domain will change: no hostname outside `wrangler.jsonc` and environment config, read through `lib/config.ts`.
 
@@ -106,9 +110,10 @@ D1 (from M1) is the only source of truth. R2 (from M4) holds files only.
 - Authenticate with a real test session; never override the auth check.
 - New data access has a test that a non-member is denied. Fix a bug with a test that fails first.
 - No real waits, never skip or sample tests; fix warnings instead of filtering them.
-- There is no CI. Before calling work done: the requirement's criteria are met, `npm run check` is green (until it
-  exists: lint, `npx tsc --noEmit`, build) and server changes ran in a Workers preview with a cookie. Report what you
+- There is no CI. Before calling work done: the requirement's criteria are met, `npm run check` is green (`npm run fix`
+  fixes format and imports) and server changes ran in a Workers preview with a cookie. Report what you
   couldn't run.
+- Never get around a check: no `--no-verify`, loosened rule or new ignore without the owner's approval.
 
 ## 5. Docs
 

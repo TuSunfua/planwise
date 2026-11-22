@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+fail() {
+  echo "✗ $1" >&2
+  exit 1
+}
+
+case "$(git branch --show-current)" in
+dev | staging | main) fail "Pull requests only here. Branch first: git switch -c <type>/<short-description>" ;;
+esac
+
+# `git commit <path>` uses a temporary index, so formatting would leave the real one stale.
+case "${GIT_INDEX_FILE:-}" in
+*next-index-*) fail "Don't commit by path: git add it, then git commit." ;;
+esac
+
+# The repository is public, and a global Git identity can be the wrong one.
+email=$(git config --local user.email) || fail "Run: git config --local user.email <your public email>"
+for who in AUTHOR COMMITTER; do
+  git var "GIT_${who}_IDENT" | grep -qF "<$email>" || fail "The $who is not this repository's user.email."
+done
+
+# Git clients started from the desktop don't have nvm's Node on PATH.
+command -v node >/dev/null || PATH="$(ls -d "$HOME"/.nvm/versions/node/*/bin | sort -V | tail -n 1):$PATH"
+
+staged() {
+  git diff --cached --name-only -z --diff-filter=ACMR -- "$@"
+}
+staged | GIT_LITERAL_PATHSPECS=1 xargs -0 -r git diff --quiet -- ||
+  fail "A staged file has unstaged edits, which formatting would commit. Stage or stash them."
+
+bin=node_modules/.bin
+staged '*.js' '*.mjs' '*.ts' '*.tsx' | xargs -0 -r "$bin/eslint" --fix --max-warnings 0 --no-warn-ignored
+staged | xargs -0 -r "$bin/prettier" --write --ignore-unknown --log-level warn
+staged | GIT_LITERAL_PATHSPECS=1 xargs -0 -r git add --
+npm run --silent typecheck

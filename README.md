@@ -26,6 +26,7 @@ The [roadmap](docs/roadmap.md) breaks both phases into milestones.
 | --- | --- | --- |
 | App | Next.js 16 App Router, React 19, TypeScript | In place |
 | Styling | Tailwind CSS 4 | In place |
+| UI primitives | shadcn/ui on Base UI | Set up; each component comes with the feature that needs it |
 | Hosting | Cloudflare Workers through OpenNext | M0 |
 | Database | Cloudflare D1 with Drizzle ORM | M1 |
 | Framework cache | Workers Static Assets, read-only | M0 |
@@ -39,11 +40,12 @@ Each service is added only when a feature first needs it. The reasoning is in th
 
 ## Getting started
 
-You need Node.js 22.12 or newer and npm.
+You need Node.js 22.12 or newer and npm, ideally 11.10 or newer.
 
 ```bash
 git clone git@github.com:TuSunfua/planwise.git
 cd planwise
+git config --local user.email <your public email>
 ```
 
 ```bash
@@ -58,7 +60,10 @@ Open <http://localhost:3000>.
 | `npm run dev` | Start the development server |
 | `npm run build` | Create a production Next.js build |
 | `npm run start` | Serve that build with Node.js |
+| `npm run fix` | Format, sort imports and classes |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Type-check, routes included |
+| `npm run check` | Run every check and a build |
 
 Cloudflare preview and deploy commands arrive in milestone M0. Until then, the app cannot be deployed to Workers.
 
