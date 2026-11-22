@@ -7,7 +7,7 @@ installed in M0. There is no CI: run them by hand.
 | --- | --- | --- | --- |
 | Static | ESLint, TypeScript, formatter | Style, types, import boundaries | Before every PR |
 | Unit | Vitest | Rules, schemas, dates, ordering, permissions | Before every PR |
-| Integration | Vitest with Cloudflare's Workers pool | Services, SQL, migrations, R2, Queues | Before every PR |
+| Integration | Vitest with Cloudflare's Workers pool | DAL, SQL, migrations, jobs, bindings in use | Before every PR |
 | End to end | Playwright against a Workers preview | Core journeys | Before every PR |
 | Accessibility | axe in Playwright, plus manual keyboard pass | WCAG 2.2 AA | PR and release |
 | Load | Scripted clients against staging | Latency, live updates | Before launches |
@@ -21,7 +21,7 @@ End-to-end tests run against the OpenNext build, not `next dev`, because the fai
 - **Conflicts:** stale versions change nothing, including other statements in the batch.
 - **Time:** midnight, daylight-saving changes and users far from UTC.
 - **D1 limits:** more than 100 bound values.
-- **Retries:** the same queue message twice produces one effect.
+- **Retries:** the same job twice produces one effect.
 - **Migrations:** from empty and from the previous release with data.
 
 ## Workers smoke test
@@ -32,7 +32,7 @@ Run on every framework, adapter, Wrangler or compatibility-date change:
 2. A dynamic page returns 200 **with and without a cookie**.
 3. A Cache Components page streams its dynamic part.
 4. A Server Action mutates and refreshes.
-5. D1 and R2 round trips work.
+5. Each binding in use works (D1 from M1, R2 from M4).
 6. Runtime logs contain no unexpected errors.
 
 ## Conventions
@@ -47,6 +47,6 @@ Run on every framework, adapter, Wrangler or compatibility-date change:
 - Never sample or skip tests to save time. Deprecation warnings stay visible: fix ours.
 - Fix a bug with a test that fails first.
 - Test behavior, not implementation.
-- Use real local bindings, not a mocked D1 or R2.
+- Use real local bindings, not mocks.
 - Use synthetic data only.
 - A flaky test is fixed, not retried or skipped.

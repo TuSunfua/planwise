@@ -12,7 +12,7 @@ Priority: **Must** is required for release, **Should** is expected, **Could** is
 
 | ID | Requirement | Priority | Acceptance criteria |
 | --- | --- | --- | --- |
-| AUTH-01 | Sign in with an email code | Must | Code expires in 10 minutes, works once and allows 5 attempts |
+| AUTH-01 | Sign up and sign in with an email code, open to everyone | Must | Code expires in 10 minutes, works once and allows 5 attempts |
 | AUTH-03 | Sign out and revoke sessions | Must | A revoked session fails on its next request |
 | AUTH-04 | Set profile, timezone and theme | Must | Today follows the saved timezone; theme is system, light or dark, with no flash on load |
 | AUTH-05 | Get an Inbox on sign-up | Must | Exactly one exists, even if sign-up is retried |
@@ -54,7 +54,7 @@ Priority: **Must** is required for release, **Should** is expected, **Could** is
 | ORG-02 | Search | Must | Finds title and notes matches only in accessible projects |
 | ORG-03 | Filters | Should | By status, priority, label and date; stored in the URL |
 | FILE-01 | Attachments | Should | Up to 10 MB each; private; removed when the task is purged |
-| REM-01 | Email reminders | Could | Sent once at the chosen time, not for completed or deleted tasks |
+| REM-01 | Email reminders | Could | Sent once at the chosen time, or later if the email budget is spent; not for completed or deleted tasks |
 | DATA-01 | Export data | Must | JSON containing everything the user owns |
 | DATA-02 | Delete account | Must | Requires recent sign-in; removes rows and R2 objects |
 

@@ -7,7 +7,7 @@
 
 <p align="center"><strong>Plan on your own. Get it done together.</strong></p>
 
-PlanWise is a task management app that works well for one person first, then grows into a place where people work on projects together. It is free to use and runs entirely on Cloudflare. The source is visible but not open source: there is no license, so all rights are reserved.
+PlanWise is a task management app that works well for one person first, then grows into a place where people work on projects together. It is free to use and is built to run at no cost: on Cloudflare's Free plan, with a free external email sender. The source is visible but not open source: there is no license, so all rights are reserved.
 
 > **Status: planning.** The repository holds the plan, conventions, brand assets and an empty Next.js app that shows only the logo. No features are built yet.
 
@@ -27,15 +27,15 @@ The [roadmap](docs/roadmap.md) breaks both phases into milestones.
 | App | Next.js 16 App Router, React 19, TypeScript | In place |
 | Styling | Tailwind CSS 4 | In place |
 | Hosting | Cloudflare Workers through OpenNext | M0 |
-| Database | Cloudflare D1 with Drizzle ORM | M0 |
-| Framework cache | R2, in its own bucket | M0 |
+| Database | Cloudflare D1 with Drizzle ORM | M1 |
+| Framework cache | Workers Static Assets, read-only | M0 |
 | Authentication | Better Auth: email code | M1 |
-| Email | Cloudflare Email Service | M1 |
+| Email | Resend's free plan, guarded by Turnstile | M1 |
 | Files | Cloudflare R2 | M4 |
-| Background work | Cron Triggers and Queues | M4 |
+| Background work | Cron Triggers | M4 |
 | Live updates | Durable Objects with WebSockets | M8 |
 
-The reasoning is in the [decision records](docs/decisions/README.md).
+Each service is added only when a feature first needs it. The reasoning is in the [decision records](docs/decisions/README.md).
 
 ## Getting started
 
@@ -71,4 +71,4 @@ Cloudflare preview and deploy commands arrive in milestone M0. Until then, the a
 - [Rules for coding agents](AGENTS.md)
 - [Brand and logo](docs/brand/README.md)
 - [Theme](docs/brand/theme.md)
-- [Open questions](docs/open-questions.md)
+- [Decisions](docs/decisions/README.md)

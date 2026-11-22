@@ -8,20 +8,17 @@ is implemented yet.
 ```mermaid
 flowchart TB
   B[Browser] -->|HTTPS| W[planwise-web<br/>Next.js on OpenNext]
-  W --> A[Workers Static Assets]
-  W --> D[(D1<br/>source of truth)]
-  W --> F[(R2<br/>private files)]
-  W --> C[(R2<br/>framework cache)]
-  W --> Q[[Queues]]
-  T[Cron Trigger] --> J[planwise-jobs]
-  Q --> J
+  W --> A[Workers Static Assets<br/>files and prerender cache]
+  W -->|M1| D[(D1<br/>source of truth)]
+  W -->|M1: sign-in codes| E[External email sender]
+  W -->|M4| F[(R2<br/>private files)]
+  T[Cron Trigger, M4] --> J[planwise-jobs]
   J --> D
   J --> F
-  J --> E[Email Service]
-  W -->|sign-in codes| E
-  B -. Phase 2 WebSocket .-> R[planwise-realtime]
+  J --> E
+  B -. M8 WebSocket .-> R[planwise-realtime]
   R -.-> O[Durable Object<br/>one per project]
-  W -. after commit .-> R
+  W -. M8 after commit .-> R
 ```
 
 | Worker | Responsibility | Arrives in |
@@ -39,7 +36,7 @@ flowchart LR
   UI[app<br/>pages and route handlers] --> S[data<br/>rules and authorization]
   ACT[app/**/actions] --> S
   S --> R[db/queries<br/>scoped SQL]
-  S --> P[lib<br/>R2, Queues, email]
+  S --> P[lib<br/>email, files]
   R --> DB[(D1)]
 ```
 
@@ -69,15 +66,16 @@ Server Components call the DAL directly, not the app's own HTTP endpoints.
 | Content | Policy |
 | --- | --- |
 | Hashed static assets | Served by Workers Static Assets |
-| Public pages and static shells | Prerendered, stored in the R2 incremental cache |
+| Public pages and static shells | Prerendered, stored in the read-only Static Assets cache; change on deploy |
 | Session, tasks, projects, anything user-specific | Read per request; deduplicate with React `cache()` only |
-| Public data needing tag revalidation | Not allowed until a tag cache is configured and tested |
+| Anything needing `use cache` or revalidation | Not allowed until an ADR adds a writable cache |
 
 Keeping user data out of shared caches means revoked access takes effect on the next request.
 
 ## Consistency
 
-- D1 is the only source of truth. R2, Queues and Durable Objects never decide permissions or task state.
-- D1 and Queues cannot commit together. Work that must not be lost is recorded in D1 and swept by the jobs Worker.
-- Queue consumers are idempotent because messages can be delivered more than once.
+- D1 is the only source of truth. R2, email and Durable Objects never decide permissions or task state.
+- D1 cannot commit together with email or R2. Work that must not be lost is recorded in D1 and, from M4, swept
+  by the jobs Worker.
+- Jobs are idempotent because a sweep can repeat.
 - A live update is a hint to refetch. Losing one cannot lose data.

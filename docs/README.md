@@ -11,8 +11,7 @@ docs/
 ├── operations/      deploying, rolling back, operating
 ├── decisions/       why: architecture decision records
 ├── brand/           logo and theme
-├── roadmap.md
-└── open-questions.md
+└── roadmap.md
 ```
 
 ## Where to start
@@ -39,7 +38,6 @@ docs/
 | [phase-1-solo.md](product/phase-1-solo.md) | Requirements and release criteria of the solo app |
 | [phase-2-collaboration.md](product/phase-2-collaboration.md) | Requirements and release criteria of collaboration |
 | [roadmap.md](roadmap.md) | Milestones, their exit criteria, risks |
-| [open-questions.md](open-questions.md) | What is undecided, with working defaults |
 
 ### Platform
 
@@ -88,7 +86,7 @@ Each fact is written once, in the doc that owns it; other docs link to it instea
 | Branches, commits, merging | [git-conventions.md](development/git-conventions.md) |
 | Releasing and rolling back | [deployment.md](operations/deployment.md) |
 | Colors, type, components | [theme.md](brand/theme.md) |
-| Why a choice was made | its ADR |
+| Why a choice was made, and what is still Proposed | its ADR |
 
 ## Writing docs
 

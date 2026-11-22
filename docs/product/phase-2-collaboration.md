@@ -14,7 +14,7 @@ There are three roles: **owner**, **editor** and **viewer**. The [permission mat
 
 | ID | Requirement | Priority | Acceptance criteria |
 | --- | --- | --- | --- |
-| MEM-01 | Invite by email | Must | Expires in 7 days, works once, only for that verified email |
+| MEM-01 | Invite by email | Must | Expires in 7 days, works once, only for that verified email; the link can be copied if the email can't be sent |
 | MEM-02 | Revoke or resend an invitation | Must | The previous link stops working immediately |
 | MEM-03 | Change roles | Must | Applies on the member's next request |
 | MEM-04 | Remove a member or leave | Must | Access and live connection end; their assignments are cleared |

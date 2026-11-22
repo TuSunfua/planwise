@@ -11,6 +11,7 @@ The threats, and the rules for auth, permissions, input, files and privacy that 
 | Stolen or guessed sign-in code | Hashing, expiry, attempt limit, rate limits |
 | Cross-site scripting through task content | Plain text rendering, no raw HTML, CSP |
 | Cross-site request forgery | SameSite cookies and origin checks |
+| Bots spending the email quota, locking everyone out | Turnstile, limits per address and IP, a reserved budget |
 | Malicious upload | Size cap, type allowlist, forced download |
 | Cross-user cache leak | No user data in shared caches |
 | Access after removal | Check every request; close live connections |
@@ -20,6 +21,8 @@ The threats, and the rules for auth, permissions, input, files and privacy that 
 
 - Better Auth with email codes only. There are no passwords and no social sign-in.
 - Codes are stored hashed, expire in 10 minutes, work once and allow 5 attempts.
+- Before a code is sent: the bot check passes, then the limits hold (3 codes per address and 10 per IP an hour),
+  then the [email budget](cloudflare.md#email-budget) has room.
 - Responses do not reveal whether an account exists.
 - Cookies are `HttpOnly`, `Secure` outside local development and `SameSite=Lax`.
 - Sessions are checked in D1. Do not enable a session cookie cache, which delays revocation.
@@ -59,7 +62,7 @@ An archived project is read-only for every role except for unarchive and delete 
 
 ## Input and output
 
-- Parse every external input with a schema on the server: actions, routes, params, search params and queue messages.
+- Parse every external input with a schema on the server: actions, routes, params, search params and job records.
 - Initial caps: title 500 characters, notes 20,000, comment 10,000, project name 100, label 50.
 - Bind SQL parameters. Never concatenate input.
 - Return DTOs with named fields. Never pass a database row to a Client Component.
@@ -83,6 +86,8 @@ Nonce-based CSP normally relies on Proxy, which is unavailable here. Choose and 
 ## Privacy
 
 - Logs contain request, user and resource IDs, outcome and duration. They never contain content, emails, codes, tokens or cookies.
-- Queue messages and live events carry IDs only.
+- Job records and live events carry IDs only.
 - Users can export and delete their data. Deleted data can remain in D1 recovery history for up to 7 days, and in pre-release exports until those are deleted. The privacy policy must disclose both.
+- The email sender receives addresses and message content and may keep them, outside Asia too. Send it only
+  what the message needs, and name it in the privacy policy.
 - No third-party analytics without owner approval.

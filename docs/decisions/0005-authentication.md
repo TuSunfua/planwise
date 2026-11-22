@@ -1,6 +1,6 @@
 # 0005: Passwordless sign-in with Better Auth
 
-- **Status:** Accepted
+- **Status:** Accepted. Delivery is decided in [0007](0007-free-cost-external-email.md)
 - **Date:** 2026-11-22
 
 ## Context
@@ -9,7 +9,7 @@ Both phases need accounts and Phase 2 needs verified emails for invitations. Aut
 
 ## Decision
 
-Use Better Auth with the Drizzle adapter on D1, and email one-time codes as the only sign-in method. Codes are sent through one wrapper, `lib/email.ts`, so the sender can be chosen later ([Q13](../open-questions.md)). Create the auth instance per request.
+Use Better Auth with the Drizzle adapter on D1, and email one-time codes as the only sign-in method. Codes are sent through one wrapper, `lib/email.ts`, so the sender can be chosen later. Create the auth instance per request.
 
 ## Alternatives
 

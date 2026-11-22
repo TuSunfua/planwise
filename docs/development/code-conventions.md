@@ -37,7 +37,7 @@ lib/                        # what is neither UI nor data
 ├── auth.ts, permissions.ts
 ├── config.ts               # typed settings, constants, the app's URL
 ├── errors.ts, actions.ts, http.ts, pagination.ts, logging.ts
-├── email.ts, storage.ts, queue.ts   # one wrapper per Cloudflare service
+├── email.ts, storage.ts    # one wrapper per service, written when that service arrives
 └── schemas/                # field types and per-resource schemas and DTOs, safe on the client
 public/                     # static files
 tests/                      # integration/<resource>.test.ts, e2e/
@@ -79,7 +79,7 @@ only when none fits. When a second route needs the same thing, **move it up** an
 
 Every input is fully validated by its schema: bad input is a validation error (422 over HTTP) with the
 reason, never a 500 from D1 or a silent no-op. Parse at the boundary: action arguments, params, search
-params, request bodies, queue messages, environment.
+params, request bodies, job records, environment.
 
 - **Use the shared field types** (`lib/schemas/fields.ts`): `name`, `description`, `email` (lowercased), `id`,
   `calendarDay`, `timezone`, `paletteKey`. Add one there when a second schema needs the same rule.
@@ -179,7 +179,7 @@ Comment what a reader can't get from the code; names, types and small functions 
 | Keep | Drop |
 |------|------|
 | the *why*: a non-obvious reason or constraint, a race, a security decision, a third-party quirk | TSDoc that restates the name or signature |
-| external contracts: queue messages, R2 key layouts, event shapes | file headers that paraphrase the file name |
+| external contracts: job records, R2 key layouts, event shapes | file headers that paraphrase the file name |
 | domain meaning a newcomer needs | comments narrating the next line |
 | example values and units: `// e.g. "Asia/Ho_Chi_Minh"`, `// bytes` | the code's history ("moved from…", "used to…") |
 | group labels in long lists: `// Phase 2` | decorative banners |
@@ -206,7 +206,9 @@ Log with `getLogger`, never `console`. Every line of a request carries `request_
 - Don't repeat what the boundary logs already (error responses, unexpected exceptions).
 - `debug` repeats and detail; `info` state changes; `warn` a failure to be retried; `error` a bug, with
   its stack.
-- **Never log** secrets, cookies, request bodies, email addresses or task content, even at `debug`.
+- **Never log** secrets, cookies, request bodies, email addresses or task content, even at `debug`. One
+  exception: in local development without an email key, `lib/email.ts` prints the message instead of
+  sending it. A deployed environment without a key fails instead.
 
 ## 7. Next.js and Cloudflare
 
@@ -216,7 +218,8 @@ Read the bundled guide in `node_modules/next/dist/docs/` before using an API.
 - `params`, `searchParams`, `cookies()` and `headers()` are async. Request-time and uncached reads go
   inside `<Suspense>`.
 - Actions are for UI mutations only, never for fetching what a page renders. Never mutate during render.
-- After a user-data mutation, call `refresh()` from `next/cache`. User data never goes in `use cache`.
+- After a user-data mutation, call `refresh()` from `next/cache`. No `use cache`, `revalidatePath` or
+  `revalidateTag`: the cache is read-only ([ADR 0009](../decisions/0009-services-when-needed.md)).
 - No `proxy.ts`, no `runtime = "edge"`, no route-segment options that Cache Components replaces.
 - Create the database and auth instances per request; no request state at module level.
 - Await work or hand it to `after()`. Web APIs first; check each dependency runs in workerd.
@@ -236,7 +239,7 @@ Read the bundled guide in `node_modules/next/dist/docs/` before using an API.
 
 ### English now, i18n later
 
-The app is English only ([Q6](../open-questions.md)). These rules keep adding languages cheap:
+The app is English only for now, with i18n to come. These rules keep adding languages cheap:
 
 - User-facing text lives in pages and components, never in `data/`, `db/` or the database. The UI chooses
   its text from the error's `code`.
@@ -265,6 +268,6 @@ run `npm run lint`, `npx tsc --noEmit` and `npm run build`.
 **New table or column:** `db/schema.ts` → a generated, reviewed migration → the
 [data model](../platform/data-model.md) → a test from the previous release's data.
 
-**New binding or Worker:** an ADR if it is a new service → `wrangler.jsonc` for every environment →
+**New binding or Worker:** confirm the feature being built needs it now → an ADR if it is a new service → `wrangler.jsonc` for every environment →
 its wrapper in `lib/` → [cloudflare.md](../platform/cloudflare.md) and
 [deployment.md](../operations/deployment.md).

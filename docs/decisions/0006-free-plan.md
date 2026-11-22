@@ -1,6 +1,7 @@
 # 0006: Run on Cloudflare's Free plan
 
-- **Status:** Accepted
+- **Status:** Accepted, except the Email section, superseded by [0007](0007-free-cost-external-email.md), and the R2 section,
+  superseded by [0009](0009-services-when-needed.md)
 - **Date:** 2026-11-22
 
 ## Context
@@ -42,8 +43,7 @@ from Workers Logs, before anything is built on this stack. If it doesn't fit, th
 ### Email
 
 Email Service on Free sends only to verified destination addresses in the Cloudflare account, and needs a
-domain on Cloudflare. It cannot send sign-in codes to the public. Options, tracked as
-[Q13](../open-questions.md):
+domain on Cloudflare. It cannot send sign-in codes to the public. Options:
 
 1. Workers Paid: 3,000 emails per month included, all on Cloudflare.
 2. An external email provider with a free tier: an exception to [ADR 0001](0001-cloudflare-only.md).

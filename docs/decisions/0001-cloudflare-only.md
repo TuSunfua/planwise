@@ -1,6 +1,6 @@
 # 0001: Run everything on Cloudflare
 
-- **Status:** Accepted
+- **Status:** Accepted, except email: superseded by [0007](0007-free-cost-external-email.md)
 - **Date:** 2026-11-22
 
 ## Context

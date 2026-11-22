@@ -36,7 +36,7 @@ Run on the commit being deployed:
 1. Confirm that migrations work with the code currently in production.
 2. Record a D1 Time Travel bookmark.
 3. Apply migrations.
-4. Deploy with the OpenNext CLI, which also populates the cache.
+4. Deploy with the OpenNext CLI, which uploads the prerender cache with the static assets.
 5. Smoke-test with a signed-in account and watch errors.
 6. Tag the released commit, so what runs can be traced and rolled back to.
 
@@ -44,10 +44,11 @@ Changes touching several Workers deploy consumers before producers.
 
 ## Creating resources
 
-The location is chosen at creation and can't be changed afterwards, so never skip it:
+Create a resource only in the [milestone that needs it](../platform/cloudflare.md#services). The location is
+chosen at creation and can't be changed afterwards, so never skip it:
 
-- D1: `wrangler d1 create <name> --location apac`
-- R2: `wrangler r2 bucket create <name> --location apac`
+- D1, from M1: `wrangler d1 create <name> --location apac`
+- R2, from M4: `wrangler r2 bucket create <name> --location apac`
 
 ## Changing the domain
 
@@ -57,14 +58,14 @@ The domain is configuration. Changing it must never need a code change.
 |---|---|---|
 | Custom domain | `routes` of each environment in `wrangler.jsonc` | `app.example.com` |
 | `APP_URL` | the environment's variables, at build and at runtime | `https://app.example.com` |
-| `EMAIL_FROM` | the environment's variables | `PlanWise <no-reply@example.com>` |
+| `EMAIL_FROM` | the environment's variables | `PlanWise <no-reply@mail.example.com>` |
 
 What keeps it that way:
 
 - `lib/config.ts` is the only reader of both variables. Auth's base URL and trusted origins, origin checks,
   `metadataBase` and links in emails all derive from it.
 - Links inside the app are relative.
-- Absolute URLs are never stored in D1, R2 or queue messages.
+- Absolute URLs are never stored in D1 or R2.
 - Cookies are host-only: no `Domain` attribute.
 
 To switch:
@@ -72,11 +73,24 @@ To switch:
 1. Add the domain to the Cloudflare account as an active zone. For a subdomain such as
    `planwise.fulltech.io.vn`, the zone is `fulltech.io.vn`, which must use Cloudflare's nameservers.
 2. Change the settings above for that environment.
-3. If email is live, onboard the new domain in Email Service before switching `EMAIL_FROM`.
+3. If email is live, [set up the sending domain](#setting-up-email) before switching `EMAIL_FROM`, and add the
+   new hostname to the Turnstile widget if one is used.
 4. Rebuild, since prerendered pages contain the URL, then deploy and smoke-test.
 5. Redirect the old domain for a while. Users sign in again, as cookies don't move between hosts.
 
-Until a domain is chosen, staging and production use their `workers.dev` addresses.
+Until a domain is chosen, staging and production use their `workers.dev` addresses. The candidates are
+`planwise.id.vn` (preferred, as it serves only this app) and a subdomain of `fulltech.io.vn`.
+
+## Setting up email
+
+Done in M1. The app can stay on `workers.dev`: only the sender needs a domain.
+
+1. Add a sending subdomain, such as `mail.planwise.id.vn`, at the provider.
+2. Add the DNS records it gives (SPF, DKIM) and a DMARC record. The DNS can be hosted anywhere.
+3. Create a send-only API key for each environment that exists and store it with `wrangler secret put EMAIL_API_KEY`.
+4. Set `EMAIL_FROM`, then send a code to an address at two different mail providers and check it isn't spam.
+
+Staging and production share the provider's quota: never load-test against the real sender.
 
 ## Rollback
 
