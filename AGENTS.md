@@ -10,14 +10,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Agent Context & System Rules
 
-You are working on PlanWise: a task management app (Next.js 16, TypeScript, D1, R2; public code, no license) that runs
-entirely on Cloudflare's **Free plan**. Phase 1 is solo accounts; Phase 2 adds collaboration inside projects. This file
-holds the rules most tasks need. Before changing an area, read its guide (`docs/README.md` indexes them all):
+You are working on PlanWise: a task management app (Next.js 16, TypeScript, Cloudflare; public code, no license) that
+must **cost nothing to run**: Cloudflare's Free plan, plus one external email sender on a free tier. Phase 1 is solo
+accounts; Phase 2 adds collaboration inside projects. This file holds the rules most tasks need. Before changing an
+area, read its guide (`docs/README.md` indexes them all):
 
 - adding code (structure, layers, validation, errors, logging, configuration): `docs/development/code-conventions.md`
   (read first)
-- what to build: `docs/roadmap.md` and the phase's file in `docs/product/`; decided and undecided:
-  `docs/open-questions.md`; why: `docs/decisions/`
+- what to build: `docs/roadmap.md` and the phase's file in `docs/product/`; what was decided and why: `docs/decisions/`
 - request flow and caching: `docs/platform/architecture.md`; bindings and limits: `docs/platform/cloudflare.md`
 - tables and SQL: `docs/platform/data-model.md`; permissions, input, files: `docs/platform/security.md`
 - UI, colors, type, motion: `docs/brand/theme.md`; logo: `docs/brand/README.md`
@@ -35,16 +35,18 @@ docs credits an AI or tool. No `Co-Authored-By` for a bot, no "Generated with". 
 | Worker | Does | From |
 |---|---|---|
 | `planwise-web` | UI, auth, every user-initiated read and write, through OpenNext | M0 |
-| `planwise-jobs` | reminders, notifications, purging (Cron, Queues) | M4 |
+| `planwise-jobs` | reminders, notifications, purging (Cron) | M4 |
 | `planwise-realtime` | live updates (one Durable Object per project) | M8 |
 
-D1 is the only source of truth. R2 holds files and the framework cache, in separate buckets.
+D1 (from M1) is the only source of truth. R2 (from M4) holds files only.
 
 - Build only the requested milestone; no Phase 2 features during Phase 1.
+- **Add a service only when a feature needs it:** no binding, account, resource or environment ahead of its milestone
+  (`docs/platform/cloudflare.md#services`).
 - **Design for the Free plan:** 10 ms CPU per request, 50 D1 queries per invocation, daily quotas. Keep renders small,
   push work into SQL or the client, and never assume a paid feature.
-- Ask before adding a dependency, a Cloudflare product or anything that costs money. No infrastructure outside
-  Cloudflare. Sign-in is by email only.
+- Ask before adding a dependency, a service or anything that can bill. The email sender is the only infrastructure
+  outside Cloudflare, reached only through `lib/email.ts`. Sign-in is by emailed code only, open to everyone.
 - Never deploy, run a remote migration or change a remote resource without explicit approval.
 - The domain will change: no hostname outside `wrangler.jsonc` and environment config, read through `lib/config.ts`.
 
@@ -56,7 +58,7 @@ D1 is the only source of truth. R2 holds files and the framework cache, in separ
   authorizes. Layouts and hidden UI are not authorization.
 - Decide with `hasPermission()`, never a role name: roles are only sets of permission keys.
 - Repeat the check in the write's SQL, so a revoked member can't win a race.
-- Never put user or project data in `use cache` or `use cache: remote`.
+- Never put user or project data in a shared cache or in prerendered output.
 
 ## 3. Writing code
 
@@ -92,14 +94,15 @@ D1 is the only source of truth. R2 holds files and the framework cache, in separ
 
 - Production is workerd: a passing `next build` or `next dev` proves nothing about it.
 - **No `proxy.ts`**: with OpenNext 1.20.18 it returns 500 for every request that has a cookie (ADR 0002).
-- Keep the R2 incremental cache: without it, Cache Components pages return 500.
+- Keep the Static Assets incremental cache: with none, Cache Components pages return 500. It is read-only, so no
+  `use cache` and no revalidation (ADR 0009).
 - No `runtime = "edge"`, local filesystem, native add-ons, password hashing or long-lived timers.
 - No request data, sessions or binding-backed clients at module level: isolates are shared between users.
-- Request-time and uncached reads go inside `<Suspense>`. Background work goes to `after()` or a Queue.
+- Request-time and uncached reads go inside `<Suspense>`. Background work goes to `after()` or the jobs Worker.
 
 ## 4. Tests
 
-- Integration tests go through the real DAL on local D1 and R2 bindings; never a mocked database.
+- Integration tests go through the real DAL on local bindings; never a mocked database.
 - Authenticate with a real test session; never override the auth check.
 - New data access has a test that a non-member is denied. Fix a bug with a test that fails first.
 - No real waits, never skip or sample tests; fix warnings instead of filtering them.

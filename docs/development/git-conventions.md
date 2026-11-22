@@ -38,7 +38,8 @@ main ← staging ← dev ← feat/*, fix/*, refactor/*, chore/*, …
 
 - Never push to `main`, `staging` or `dev`: every change goes through a pull request (PR). The exceptions
   are creating the three branches in the empty repository and the [fast-forward promotions](#merging).
-- Protect the three branches on GitHub (free for public repositories), letting only the maintainer promote.
+- GitHub enforces this: `dev` takes pull requests only, with no bypass; on `staging` and `main` only an admin
+  can push, for promotions; none of the three can be force-pushed or deleted.
 - Branch from `dev` for every change, named `<type>/<short-description>` with a type from the table
   below, e.g. `feat/quick-capture`, `fix/today-timezone`.
 - Start from the requirement: its ID in `docs/product/` and its milestone in the
@@ -111,8 +112,9 @@ Before asking for a merge:
 ## Merging
 
 - A PR into `dev` needs one review; while there is one maintainer, that is their own pass over the checklist.
-- Feature branch → `dev`: **squash**. The PR title becomes the commit: check the squash message for trailers
-  GitHub copied from the branch's commits. Delete the source branch.
+- Feature branch → `dev`: **squash**, the only merge method enabled. The PR title becomes the commit and the
+  body starts empty: write the body if the change needs one, without AI attribution. GitHub deletes the
+  source branch.
 - `dev` → `staging` → `main`: **fast-forward**, keeping history linear. GitHub's merge button can't
   fast-forward, so the maintainer does this promotion from the command line after the checks pass
   (`git push origin origin/dev:staging`, then `origin/staging:main`). These are the only direct pushes.

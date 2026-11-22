@@ -51,6 +51,7 @@ Better Auth owns `users`, `sessions`, `accounts` and `verifications`, configured
 | `task_labels` | `task_id`, `label_id`, `project_id` | Both composite foreign keys include `project_id` |
 | `attachments` | `id`, `task_id`, `uploaded_by`, `file_name`, `content_type`, `size_bytes`, `state` | `state` is `pending`, `ready` or `deleting` |
 | `reminders` | `id`, `task_id`, `user_id`, `remind_at`, `state`, `sent_at` | Unique `(task_id, user_id, remind_at)` |
+| `email_usage` | `day`, `purpose`, `count` | Primary key on day and purpose; incremented with a guard on the budget |
 | `tasks_fts` | `title`, `notes` | FTS5, kept in sync by triggers |
 
 `projects.created_by` is history only. **Ownership and access come only from `project_members`.**

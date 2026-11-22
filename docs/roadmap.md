@@ -1,6 +1,7 @@
 # Roadmap
 
-Milestones are ordered by dependency and have no dates yet. Each must meet its exit criteria before the next begins.
+Milestones are ordered by dependency and have no dates yet. Each must meet its exit criteria before the next begins. A service is created only in the
+milestone that [first needs it](platform/cloudflare.md#services).
 
 ```mermaid
 flowchart LR
@@ -17,17 +18,16 @@ flowchart LR
 
 ### M0: Foundation
 
-- [ ] **Gate:** prove the stack fits Free's 10 ms of CPU on a real deployment ([ADR 0006](decisions/0006-free-plan.md#cpu))
+- [ ] **Gate:** prove the stack fits Free's 10 ms of CPU on a real deployment ([ADR 0006](decisions/0006-free-plan.md#cpu)), and that its cache files aren't public there ([ADR 0009](decisions/0009-services-when-needed.md#evidence))
 - [x] Approve the foundation ADRs (0001 to 0006)
 - [x] Ignore `.dev.vars*`, `.open-next/` and `.wrangler/` in Git
 - [ ] Add OpenNext, Wrangler and typed bindings
-- [ ] Configure the R2 incremental cache and prove a page works in workerd
+- [ ] Configure the Static Assets incremental cache and prove a page works in workerd
 - [ ] Prove a Server Action and `refresh()` work in workerd
-- [ ] Create D1 and R2 in `apac`; add Drizzle and the migration workflow
-- [ ] Read `APP_URL` and `EMAIL_FROM` only through `lib/config.ts`
+- [ ] Read `APP_URL` only through `lib/config.ts`
 - [ ] Align `@types/node` with Node 22 and declare `engines`
-- [ ] On GitHub, protect `main`, `staging` and `dev` and enable private vulnerability reporting
-- [ ] Create the `dev` and `staging` branches
+- [x] Create the `dev` and `staging` branches
+- [x] On GitHub, protect `main`, `staging` and `dev` and enable private vulnerability reporting
 - [ ] Add formatting, type check, test runners, `npm run check` and the deploy scripts
 - [ ] Make the checks fail on relative imports, dead code, `console`, broken import boundaries and an `AGENTS.md` of 200 lines or more
 - [ ] Implement the [theme](brand/theme.md) in `app/globals.css`, with the flash-free theme switch
@@ -35,13 +35,15 @@ flowchart LR
 - [ ] Load Nunito Sans, including the Vietnamese subset, and Geist Mono
 - [ ] Add the web app manifest and Apple touch icon
 
-**Exit:** `npm run check` is green, CPU fits the plan, and staging serves a page with a cookie attached, reads D1 and shows no runtime errors.
+**Exit:** `npm run check` is green, CPU fits the plan, and staging serves a page with a cookie attached and shows no runtime errors.
 
 ### M1: Accounts
 
-- [ ] Decide how email is delivered ([Q13](open-questions.md))
+- [ ] Create D1 in `apac`; add Drizzle and the migration workflow
+- [ ] Create Resend and Turnstile; [set up email](operations/deployment.md#setting-up-email) on the chosen domain
+- [ ] Repeat the CPU check with a session lookup in D1
 - [ ] AUTH-01 and AUTH-03 to AUTH-05
-- [ ] Email sending, rate limits and security headers
+- [ ] Email sending with its budget, bot check, rate limits and security headers
 - [ ] Authorization module with an owner membership row for every project
 
 **Exit:** two test users can sign in and neither can read the other's Inbox.
@@ -63,13 +65,15 @@ flowchart LR
 
 - [ ] ORG-01 to ORG-03, FILE-01, REM-01
 - [ ] DATA-01 and DATA-02
-- [ ] Jobs Worker for reminders and purging
-- [ ] Per-user attachment cap that keeps R2 inside its free tier
+- [ ] Create R2 in `apac` when FILE-01 starts, not before
+- [ ] Jobs Worker with a Cron Trigger, for reminders and purging
+- [ ] Attachment caps, per user and app-wide, that keep R2 inside its free tier
 
 **Exit:** files and search are access-controlled and jobs are safe to retry.
 
 ### M5: Solo launch
 
+- [ ] Create the production environment
 - [ ] Accessibility, performance and security passes
 - [ ] Restore rehearsal, alerts and spending notifications
 - [ ] Privacy policy, terms and name/trademark check
@@ -111,7 +115,8 @@ flowchart LR
 | OpenNext does not fully support Cache Components | Broken rendering | Pin versions, smoke-test in workerd, fall back as described in [ADR 0002](decisions/0002-nextjs-on-workers.md) |
 | `proxy.ts` is broken on the adapter | 500 for signed-in users | Banned; auth lives in the server layer |
 | Free allows 10 ms of CPU; local tests measured 16 to 27 ms | Pages fail with error 1102 | Gate at the start of M0 |
-| Free can't email the public | Nobody else can sign in | Decide Q13 before M1 |
+| The free email quota runs out or is abused | Nobody can sign in | Bot check, rate limits, a budget reserved for sign-in |
+| R2 bills above its free tier | The app stops being free | App-wide storage cap, usage alert |
 | Free daily quotas run out | Outage until 00:00 UTC | Budgets, indexes, quota alerts |
 | One D1 database handles one query at a time | Slow under load | Short indexed queries, pagination, load tests |
 | Permission bug when sharing arrives | Data leak | Membership-based access from M1 |

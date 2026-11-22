@@ -1,6 +1,6 @@
 # 0002: Run Next.js on Workers with OpenNext
 
-- **Status:** Accepted
+- **Status:** Accepted, except the R2 cache: superseded by [0009](0009-services-when-needed.md)
 - **Date:** 2026-11-22
 
 ## Context
