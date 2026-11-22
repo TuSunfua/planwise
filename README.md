@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/brand/logo-full-dark.svg">
+    <img src="public/brand/logo-full.svg" alt="PlanWise" width="320">
+  </picture>
+</p>
 
-## Getting Started
+<p align="center"><strong>Plan on your own. Get it done together.</strong></p>
 
-First, run the development server:
+PlanWise is a task management app that works well for one person first, then grows into a place where people work on projects together. It is free to use and runs entirely on Cloudflare. The source is visible but not open source: there is no license, so all rights are reserved.
+
+> **Status: planning.** The repository holds the plan, conventions, brand assets and an empty Next.js app that shows only the logo. No features are built yet.
+
+## Phases
+
+| Phase | Goal | Highlights |
+| --- | --- | --- |
+| [1. Solo](docs/product/phase-1-solo.md) | A complete personal task manager | Inbox, Today, projects, list and board views, labels, search, attachments, reminders |
+| [2. Collaboration](docs/product/phase-2-collaboration.md) | Work together in projects | Invitations, roles, assignees, comments, activity, notifications, live updates |
+
+The [roadmap](docs/roadmap.md) breaks both phases into milestones.
+
+## Planned stack
+
+| Concern | Choice | Arrives in |
+| --- | --- | --- |
+| App | Next.js 16 App Router, React 19, TypeScript | In place |
+| Styling | Tailwind CSS 4 | In place |
+| Hosting | Cloudflare Workers through OpenNext | M0 |
+| Database | Cloudflare D1 with Drizzle ORM | M0 |
+| Framework cache | R2, in its own bucket | M0 |
+| Authentication | Better Auth: email code | M1 |
+| Email | Cloudflare Email Service | M1 |
+| Files | Cloudflare R2 | M4 |
+| Background work | Cron Triggers and Queues | M4 |
+| Live updates | Durable Objects with WebSockets | M8 |
+
+The reasoning is in the [decision records](docs/decisions/README.md).
+
+## Getting started
+
+You need Node.js 22.12 or newer and npm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone git@github.com:TuSunfua/planwise.git
+cd planwise
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm ci
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open <http://localhost:3000>.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production Next.js build |
+| `npm run start` | Serve that build with Node.js |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+Cloudflare preview and deploy commands arrive in milestone M0. Until then, the app cannot be deployed to Workers.
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Documentation index](docs/README.md)
+- [Architecture](docs/platform/architecture.md)
+- [Code conventions](docs/development/code-conventions.md)
+- [Git conventions](docs/development/git-conventions.md)
+- [Rules for coding agents](AGENTS.md)
+- [Brand and logo](docs/brand/README.md)
+- [Theme](docs/brand/theme.md)
+- [Open questions](docs/open-questions.md)
