@@ -105,13 +105,13 @@ M4) holds files only.
 
 ## 4. Tests
 
-- Integration tests go through the real DAL on a real Postgres (Node's own runner against `next start`); never a
-  mocked database.
+- Integration tests go through the real DAL on a real Postgres (`npm test`: Node's own runner against `next start`);
+  never a mocked database.
 - Authenticate with a real test session; never override the auth check.
 - New data access has a test that a non-member is denied. Fix a bug with a test that fails first.
 - No real waits, never skip or sample tests; fix warnings instead of filtering them.
 - There is no CI. Before calling work done: the requirement's criteria are met, `npm run check` is green (`npm run fix`
-  fixes format and imports) and server changes ran signed in. Report what you couldn't run.
+  fixes format and imports; Docker must be running) and server changes ran signed in. Report what you couldn't run.
 - Never get around a check: no `--no-verify`, loosened rule or new ignore without the owner's approval.
 
 ## 5. Docs

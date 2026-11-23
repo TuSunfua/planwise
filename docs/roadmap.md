@@ -24,7 +24,7 @@ flowchart LR
 - [x] On GitHub, protect `main`, `staging` and `dev` and enable private vulnerability reporting
 - [x] Align `@types/node` with Node 22 and declare `engines`
 - [x] Read every setting only through `lib/config.ts`
-- [x] Add formatting, type check, Git hooks and `npm run check`
+- [x] Add formatting, type check, Git hooks, integration tests and `npm run check`
 - [x] Make the checks fail on relative imports, unused imports and variables, `console`, broken import boundaries and an `AGENTS.md` of 200 lines or more
 - [ ] Create the Vercel project and staging, and [document the deploy](operations/deployment.md#setting-up-once)
 - [ ] Prove a Server Action and `refresh()` work when deployed
@@ -38,15 +38,15 @@ flowchart LR
 
 ### M1: Accounts
 
-- [ ] Add Drizzle, local Postgres and the migration workflow
+- [x] Add Drizzle, local Postgres and the migration workflow
 - [ ] Create the Neon project and its `staging` branch
 - [ ] Create Resend; [set up email](operations/deployment.md#setting-up-email) on the chosen domain; add BotID
-- [ ] AUTH-01, AUTH-03 and AUTH-05
+- [x] AUTH-03 and AUTH-05
+- [ ] AUTH-01: works locally; open to everyone once email is live
 - [ ] AUTH-04
-- [ ] The email budget and rate limits
-- [x] Security headers
+- [x] The email budget, rate limits and security headers
 - [ ] Email sending, with its bot check
-- [ ] Authorization module with an owner membership row for every project
+- [x] Authorization module with an owner membership row for every project
 
 **Exit:** two test users can sign in on staging and neither can read the other's Inbox.
 

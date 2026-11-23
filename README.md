@@ -9,7 +9,7 @@
 
 PlanWise is a task management app that works well for one person first, then grows into a place where people work on projects together. It is free to use and is built to run at no cost, on the free plans of Vercel, Neon and Resend. The source is visible but not open source: there is no license, so all rights are reserved.
 
-> **Status: foundation.** The repository holds the plan, conventions, brand and the app's base. Sign-in is in progress, and nothing is deployed yet.
+> **Status: early development.** Sign-in by email code and an empty Inbox work locally. Nothing is deployed, and no email is sent yet: locally the code prints in the terminal.
 
 ## Phases
 
@@ -28,8 +28,8 @@ The [roadmap](docs/roadmap.md) breaks both phases into milestones.
 | Styling | Tailwind CSS 4 | In place |
 | UI primitives | shadcn/ui on Base UI | Set up; each component comes with the feature that needs it |
 | Hosting | Vercel Hobby | Deploys in M0 |
-| Database | Postgres on Neon, with Drizzle ORM | M1 |
-| Authentication | Better Auth: email code | M1 |
+| Database | Postgres on Neon, with Drizzle ORM | Local only; Neon in M1 |
+| Authentication | Better Auth: email code | Local only; email arrives in M1 |
 | Email | Resend's free plan, guarded by Vercel BotID | M1 |
 | Files | Neon Object Storage | M4 |
 | Background work | A scheduled job route ([ADR 0009](docs/decisions/0009-scheduled-work.md)) | M4 |
@@ -39,7 +39,7 @@ Each service is added only when a feature first needs it. The reasoning is in th
 
 ## Getting started
 
-You need Node.js 22.18 or newer and npm, ideally 11.10 or newer.
+You need Node.js 22.18 or newer, npm (ideally 11.10 or newer) and Docker, for the local Postgres.
 
 ```bash
 git clone git@github.com:TuSunfua/planwise.git
@@ -49,10 +49,21 @@ git config --local user.email <your public email>
 
 ```bash
 npm ci
+cp .env.example .env.local
+sed -i "s|^AUTH_SECRET=.*|AUTH_SECRET=$(openssl rand -base64 32)|" .env.local
+npm run db:up
+npm run db:migrate
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open <http://localhost:3000>. No cloud account is needed. The sign-in code prints in the terminal that runs
+`npm run dev`.
+
+Sign-in allows 3 codes per address an hour. To reset that while developing:
+
+```bash
+docker compose exec postgres psql -U planwise -c "DELETE FROM rate_limit_events"
+```
 
 | Command | Purpose |
 | --- | --- |
@@ -61,7 +72,11 @@ Open <http://localhost:3000>.
 | `npm run fix` | Format, sort imports and classes |
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Type-check, routes included |
-| `npm run check` | Run every check and a build |
+| `npm test` | Build, then run the integration tests against a fresh database |
+| `npm run check` | Run every check, the build and the tests |
+| `npm run db:up` | Start the local Postgres (Docker) |
+| `npm run db:generate` | Generate a migration from `db/schema.ts` |
+| `npm run db:migrate` | Apply migrations to the database in `DATABASE_URL` |
 
 Deploying arrives in milestone M0: [deployment.md](docs/operations/deployment.md).
 
