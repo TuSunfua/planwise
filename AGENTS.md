@@ -62,8 +62,9 @@ M4) holds files only.
 
 ## 3. Writing code
 
-- Follow Next.js's structure: routes in `app/` with route groups; what one route uses is colocated (`actions.ts`,
-  `_components/`); what several use is in `components/`, `lib/`, `data/` or `db/`.
+- Code lives in `src/`; paths here are relative to it. Follow Next.js's structure: routes in `app/` with route
+  groups; what one route uses is colocated (`actions.ts`, `_components/`); what several use is in `components/`,
+  `lib/`, `data/` or `db/`. One way to write each thing: see code-conventions §6.
 - Layers go page, action or route → `data/` → `db/queries/` → schema. Pages and actions stay thin; `db/queries/`
   holds all SQL; only `lib/config.ts` reads the environment.
 - Imports are absolute (`@/…`) and at the top of the file. No barrel files, no `utils` or `helpers` modules.
@@ -77,8 +78,8 @@ M4) holds files only.
   `lib/http.ts` (201 created, 204 nothing to return, else 200).
 - Paginate every list with `lib/pagination.ts`. One shape per resource.
 - Atomic writes use `db.transaction()`; limits lock their key first. Never edit an applied migration.
-- Comment what a reader can't get from the code, nothing else: the why, external contracts, units and examples.
-  No restating, narrating, history or banners.
+- Comment only what a reader can't get from the code or the docs: the why, external contracts, units and examples.
+  No restating, narrating, history, banners or setup steps (those go in the README or docs).
 - Log state changes and decisions with `getLogger`; never secrets, tokens, cookies, bodies, emails or task content.
 - The repository is public but not open source: add no license file or field. Never commit secrets, personal data
   or private URLs: whatever is pushed is published for good.
@@ -105,13 +106,13 @@ M4) holds files only.
 
 ## 4. Tests
 
-- Integration tests go through the real DAL on a real Postgres (Node's own runner against `next start`); never a
-  mocked database.
+- Integration tests go through the real DAL on a real Postgres (`npm test`: Node's own runner against `next start`);
+  never a mocked database.
 - Authenticate with a real test session; never override the auth check.
 - New data access has a test that a non-member is denied. Fix a bug with a test that fails first.
 - No real waits, never skip or sample tests; fix warnings instead of filtering them.
 - There is no CI. Before calling work done: the requirement's criteria are met, `npm run check` is green (`npm run fix`
-  fixes format and imports) and server changes ran signed in. Report what you couldn't run.
+  fixes format and imports; Docker must be running) and server changes ran signed in. Report what you couldn't run.
 - Never get around a check: no `--no-verify`, loosened rule or new ignore without the owner's approval.
 
 ## 5. Docs

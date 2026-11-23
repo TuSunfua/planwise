@@ -1,0 +1,17 @@
+name: planwise
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: planwise
+      POSTGRES_PASSWORD: planwise
+      POSTGRES_DB: planwise
+    ports: ["127.0.0.1:54321:5432"]
+    volumes: ["postgres:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planwise"]
+      interval: 2s
+      retries: 30
+
+volumes:
+  postgres:

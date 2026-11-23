@@ -209,6 +209,7 @@ the rules above:
 - Error and destructive text: use `danger`, and check it on its fill in both modes.
 - Shape and size: pill main button, the corners above, and 44 px primary touch targets.
 - Palette colors such as `bg-black/10` behind dialogs: use a token, here `overlay`. Lint refuses them.
+- Code style: export on the declaration instead of shadcn's `export { … }` list. Lint refuses the list.
 
 ## Component states
 

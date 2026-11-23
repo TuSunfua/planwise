@@ -1,6 +1,5 @@
 import type { NextConfig } from "next";
 
-// No nonces: they would make every page render per request. docs/platform/security.md#headers
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,

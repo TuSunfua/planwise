@@ -2,6 +2,6 @@
 *.md
 package-lock.json
 next-env.d.ts
-db/migrations/
+src/db/migrations/
 public/
-styles/shadcn.css
+src/styles/shadcn.css

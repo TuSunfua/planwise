@@ -1,5 +1,4 @@
 #!/bin/sh
-# The format and the types and scopes are from docs/development/git-conventions.md.
 message=$(sed -e '/^# -* >8 -*$/,$d' -e '/^#/d' "$1")
 header=$(printf '%s\n' "$message" | head -n 1)
 
