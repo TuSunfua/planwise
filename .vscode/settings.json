@@ -1,0 +1,8 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "[markdown]": { "editor.formatOnSave": false },
+  "css.lint.unknownAtRules": "ignore",
+  "eslint.run": "onSave"
+}

@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./shadcn.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+
+  --background: #faf9f7;
+  --foreground: #3d3a34;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #fa923c;
+  --primary-foreground: #2b1a0d;
+  --primary-hover: #ffa65c;
+  --primary-pressed: #ef8732;
+  --secondary: var(--card);
+  --progress: #55c783;
+  --progress-foreground: #0e2e1b;
+  --highlight: #ffe3c7;
+  --on-highlight: #6e3000;
+  --secondary-foreground: var(--muted-foreground);
+  --muted: #f2f1ec;
+  --muted-foreground: #625f58;
+  --accent: var(--muted);
+  --accent-foreground: var(--foreground);
+  --destructive: #b83227;
+  --border: #eae8e2;
+  --input: #87847b;
+  --ring: #be5700;
+  --link: #8f3f00;
+  --danger: #a32d23;
+  --overlay: rgb(48 43 36 / 0.32);
+
+  --sidebar: #f6f5f1;
+  --sidebar-foreground: var(--muted-foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: #eae8e1;
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  /* shadcn components calculate nested corners from this; it matches radius-lg. */
+  --radius: 10px;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #1e1c1a;
+  --foreground: #f2efe9;
+  --card: #282623;
+  --popover: #33302c;
+  --muted: #2f2d29;
+  --muted-foreground: #b3aea5;
+  --destructive: #f59a8f;
+  --highlight: #4c301b;
+  --on-highlight: #ffd2aa;
+  --border: #35322e;
+  --input: #8e887f;
+  --ring: #fa923c;
+  --link: #fdb476;
+  --danger: #f59a8f;
+  --overlay: rgb(0 0 0 / 0.6);
+
+  --sidebar: #171614;
+  --sidebar-accent: #37342f;
+}
+
+@theme inline {
+  --font-sans: var(--font-nunito-sans), system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-pressed: var(--primary-pressed);
+  --color-progress: var(--progress);
+  --color-progress-foreground: var(--progress-foreground);
+  --color-highlight: var(--highlight);
+  --color-on-highlight: var(--on-highlight);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-link: var(--link);
+  --color-danger: var(--danger);
+  --color-overlay: var(--overlay);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@theme {
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

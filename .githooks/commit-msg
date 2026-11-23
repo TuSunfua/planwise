@@ -1,0 +1,35 @@
+#!/bin/sh
+# The format and the types and scopes are from docs/development/git-conventions.md.
+message=$(sed -e '/^# -* >8 -*$/,$d' -e '/^#/d' "$1")
+header=$(printf '%s\n' "$message" | head -n 1)
+
+types='feat|fix|refactor|perf|test|docs|chore|style|revert'
+scopes='auth|settings|projects|tasks|labels|search|files|reminders|members|realtime|jobs|ui|brand|db|infra|docs'
+# A bare first name or an ordinary word (Claude, cursor) only counts where it can't be a person or a thing.
+trailer='^(co-authored|signed-off|reviewed|created|written)-by:'
+vendor='anthropic\.com|openai\.com|cursor\.com|cursoragent|copilot|chatgpt|\[bot\]'
+model='claude[ -]([0-9]|code|ai|opus|sonnet|haiku|fable)|gemini[ -]([0-9]|cli|code)'
+bare='(an? )?(ai|claude|codex|cursor|gemini|aider|devin|llm)( (agent|assistant))?'
+verb='(generated|created|written|authored|assisted) (with|by|using) (an? )?\[?'
+tool='(ai|claude|copilot|chatgpt|codex|gemini|openai|anthropic|aider|llm)([] .,:;!)]|$)'
+
+attributed() {
+  printf '%s\n' "$message" | grep -qiE "$1"
+}
+
+if attributed '^(assisted|generated)-by:|🤖|claude\.com/claude-code|claude\.ai/code' ||
+  attributed "$trailer.*($vendor|$model)" ||
+  attributed "$trailer *$bare *(<|$)" ||
+  attributed "$verb($tool|cursor([].,:;!)]|$))"; then
+  echo "✗ No AI attribution." >&2
+  exit 1
+fi
+
+case "$header" in "Merge "* | "fixup! "*) exit 0 ;; esac
+
+if ! printf '%s\n' "$header" | grep -qE "^($types)(\(($scopes)\))?!?: [^A-Z ].{0,70}$" ||
+  printf '%s\n' "$header" | grep -qE '\.$'; then
+  echo "✗ Use <type>(<scope>): <subject>, lowercase, under 72 characters, no period." >&2
+  echo "  See docs/development/git-conventions.md" >&2
+  exit 1
+fi
