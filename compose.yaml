@@ -4,10 +4,9 @@ services:
     image: postgres:18-alpine
     environment:
       POSTGRES_USER: planwise
-      POSTGRES_PASSWORD: planwise # local only
+      POSTGRES_PASSWORD: planwise
       POSTGRES_DB: planwise
-    # Not 5432, which other local projects often use.
-    ports: ["127.0.0.1:54329:5432"]
+    ports: ["127.0.0.1:54321:5432"]
     volumes: ["postgres:/var/lib/postgresql"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U planwise"]

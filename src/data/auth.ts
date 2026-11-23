@@ -4,7 +4,7 @@ import { isAPIError } from "better-auth/api";
 import { cache } from "react";
 
 import { incrementSignInEmails } from "@/db/queries/email-usage";
-import { createSignInCode, getAuth, isCodeReplaced } from "@/lib/auth";
+import { createSignInCode, getAuth, isCodeConflict } from "@/lib/auth";
 import { AUTH, EMAIL_BUDGET } from "@/lib/config";
 import { assertCanSendEmail, sendSignInCode } from "@/lib/email";
 import { InvalidRequest, NotAuthenticated, ServiceUnavailable, TooManyRequests } from "@/lib/errors";
@@ -60,7 +60,7 @@ export async function signInWithCode(input: unknown): Promise<void> {
     const { user } = await getAuth().api.signInEmailOTP({ body: { email, otp: code }, headers });
     getLogger({ request_id: id, user_id: user.id }).info(`User ${user.id}: signed in`);
   } catch (error) {
-    if (isCodeReplaced(error)) throw new InvalidRequest("Code replaced", { code: "wrong_or_expired" });
+    if (isCodeConflict(error)) throw new InvalidRequest("Code replaced", { code: "wrong_or_expired" });
     if (!isAPIError(error) || error.statusCode >= 500) throw error;
     const reason = error.body?.code === "TOO_MANY_ATTEMPTS" ? "too_many_attempts" : "wrong_or_expired";
     log.info(`Sign-in refused: ${reason}`);

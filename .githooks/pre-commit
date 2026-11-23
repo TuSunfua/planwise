@@ -15,7 +15,6 @@ case "${GIT_INDEX_FILE:-}" in
 *next-index-*) fail "Don't commit by path: git add it, then git commit." ;;
 esac
 
-# The repository is public, and a global Git identity can be the wrong one.
 email=$(git config --local user.email) || fail "Run: git config --local user.email <your public email>"
 for who in AUTHOR COMMITTER; do
   git var "GIT_${who}_IDENT" | grep -qF "<$email>" || fail "The $who is not this repository's user.email."

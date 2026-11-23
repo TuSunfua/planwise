@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { requestSignInCode, signInWithCode } from "@/data/auth";
 import { runAction } from "@/lib/actions";
 import type { Result } from "@/lib/actions";
+import { EMAIL_MAX } from "@/lib/schemas/fields";
 import { signInIntentSchema } from "@/lib/schemas/sign-in";
 
 export interface SignInState {
@@ -20,7 +21,7 @@ export interface SignInState {
 // One action for both steps, so the form also works before JavaScript has loaded.
 export async function signInAction(previous: SignInState, form: FormData): Promise<SignInState> {
   const value = form.get("email");
-  const typed = typeof value === "string" ? value.slice(0, 254) : "";
+  const typed = typeof value === "string" ? value.slice(0, EMAIL_MAX) : "";
   const intent = signInIntentSchema.safeParse(form.get("intent"));
   const answers = previous.answers + 1;
 

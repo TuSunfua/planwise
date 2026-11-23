@@ -10,7 +10,7 @@ import pg from "pg";
 // These start the production build (next start) on a fresh Postgres database and use it as a browser without
 // JavaScript would: real forms, real DAL, real database.
 
-const ADMIN_URL = "postgres://planwise:planwise@127.0.0.1:54329/postgres"; // compose.yaml
+const ADMIN_URL = "postgres://planwise:planwise@127.0.0.1:54321/postgres";
 const START_TIMEOUT_MS = 90_000;
 const READY = /Ready in/;
 

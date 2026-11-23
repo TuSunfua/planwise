@@ -62,8 +62,9 @@ M4) holds files only.
 
 ## 3. Writing code
 
-- Follow Next.js's structure: routes in `app/` with route groups; what one route uses is colocated (`actions.ts`,
-  `_components/`); what several use is in `components/`, `lib/`, `data/` or `db/`.
+- Code lives in `src/`; paths here are relative to it. Follow Next.js's structure: routes in `app/` with route
+  groups; what one route uses is colocated (`actions.ts`, `_components/`); what several use is in `components/`,
+  `lib/`, `data/` or `db/`. One way to write each thing: see code-conventions §6.
 - Layers go page, action or route → `data/` → `db/queries/` → schema. Pages and actions stay thin; `db/queries/`
   holds all SQL; only `lib/config.ts` reads the environment.
 - Imports are absolute (`@/…`) and at the top of the file. No barrel files, no `utils` or `helpers` modules.
@@ -77,8 +78,8 @@ M4) holds files only.
   `lib/http.ts` (201 created, 204 nothing to return, else 200).
 - Paginate every list with `lib/pagination.ts`. One shape per resource.
 - Atomic writes use `db.transaction()`; limits lock their key first. Never edit an applied migration.
-- Comment what a reader can't get from the code, nothing else: the why, external contracts, units and examples.
-  No restating, narrating, history or banners.
+- Comment only what a reader can't get from the code or the docs: the why, external contracts, units and examples.
+  No restating, narrating, history, banners or setup steps (those go in the README or docs).
 - Log state changes and decisions with `getLogger`; never secrets, tokens, cookies, bodies, emails or task content.
 - The repository is public but not open source: add no license file or field. Never commit secrets, personal data
   or private URLs: whatever is pushed is published for good.

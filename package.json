@@ -2,19 +2,15 @@
   "name": "planwise",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=22.18"
-  },
   "scripts": {
-    "dev": "next dev",
+    "dev": "docker compose ps -q --status running postgres | grep -q . || { docker compose up -d --wait && trap \"docker compose down\" EXIT && trap \"exit 130\" INT TERM; } && drizzle-kit migrate && next dev",
     "build": "next build",
     "lint": "eslint . --max-warnings 0",
     "fix": "eslint . --fix --max-warnings 0 && prettier --write .",
     "typecheck": "next typegen && tsc --noEmit",
-    "db:up": "docker compose up -d --wait",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "test": "npm run db:up && next build && node --test --test-reporter=spec tests/integration/*.test.ts",
+    "test": "docker compose ps -q --status running postgres | grep -q . || { docker compose up -d --wait && trap \"docker compose down\" EXIT && trap \"exit 130\" INT TERM; } && next build && node --test --test-reporter=spec tests/integration/*.test.ts",
     "check": "prettier --check . && npm run lint && npm run typecheck && test $(wc -l < AGENTS.md) -lt 200 && npm test",
     "prepare": "git config core.hooksPath .githooks || true"
   },

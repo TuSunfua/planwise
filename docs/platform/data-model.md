@@ -114,8 +114,8 @@ Check new queries with `EXPLAIN QUERY PLAN`.
 
 ## Migrations
 
-- Generate with Drizzle Kit into `db/migrations/` (`npm run db:generate`), read the SQL, and apply with
-  `npm run db:migrate`.
+- Generate with Drizzle Kit into `db/migrations/` (`npm run db:generate`) and read the SQL. `npm run dev` applies
+  them locally; staging and production get `npm run db:migrate` by hand.
 - Migrations run only when someone runs them: the app never migrates or alters the schema while serving.
 - Applied migrations are immutable. Fix forward.
 - Use expand, backfill, switch, then contract across separate releases.

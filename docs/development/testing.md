@@ -4,7 +4,7 @@ How the suites are run and written. The short rules are in `AGENTS.md` §4. The 
 runner are installed ([what they enforce](code-conventions.md#9-enforcement)); the others are proposed.
 There is no CI: run them by hand.
 
-`npm test` starts the local Postgres, builds the app, runs `next start` on a throwaway database and posts the real
+`npm test` starts the local Postgres if it isn't running (and stops it afterwards), builds the app, runs `next start` on a throwaway database and posts the real
 forms. It uses Node's own test
 runner, so there is no test library.
 

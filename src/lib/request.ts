@@ -15,7 +15,7 @@ export const getRequest = cache(async (): Promise<RequestInfo> => {
   const incoming = new Headers(await headers());
   return {
     headers: incoming,
-    id: incoming.get("cf-ray") ?? crypto.randomUUID(),
+    id: incoming.get("x-vercel-id") ?? crypto.randomUUID(),
     // Vercel overwrites this header with the client's address, so a client can't choose it.
     ip: incoming.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown",
   };

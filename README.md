@@ -51,15 +51,14 @@ git config --local user.email <your public email>
 npm ci
 cp .env.example .env.local
 sed -i "s|^AUTH_SECRET=.*|AUTH_SECRET=$(openssl rand -base64 32)|" .env.local
-npm run db:up
-npm run db:migrate
 npm run dev
 ```
 
-Open <http://localhost:3000>. No cloud account is needed. The sign-in code prints in the terminal that runs
-`npm run dev`.
+Open <http://localhost:3000>. No cloud account is needed. `npm run dev` starts the local Postgres in Docker, applies
+migrations, and removes the container when you stop it; the data stays in a Docker volume. The sign-in code prints in
+that terminal.
 
-Sign-in allows 3 codes per address an hour. To reset that while developing:
+Sign-in allows 3 codes per address an hour. To reset that while `npm run dev` runs:
 
 ```bash
 docker compose exec postgres psql -U planwise -c "DELETE FROM rate_limit_events"
@@ -67,16 +66,15 @@ docker compose exec postgres psql -U planwise -c "DELETE FROM rate_limit_events"
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the development server |
+| `npm run dev` | Start Postgres and the development server; Ctrl+C stops both |
 | `npm run build` | Create a production Next.js build |
 | `npm run fix` | Format, sort imports and classes |
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Type-check, routes included |
 | `npm test` | Build, then run the integration tests against a fresh database |
 | `npm run check` | Run every check, the build and the tests |
-| `npm run db:up` | Start the local Postgres (Docker) |
-| `npm run db:generate` | Generate a migration from `db/schema.ts` |
-| `npm run db:migrate` | Apply migrations to the database in `DATABASE_URL` |
+| `npm run db:generate` | Generate a migration from `src/db/schema.ts` |
+| `npm run db:migrate` | Apply migrations to the database in `DATABASE_URL` (`npm run dev` does it locally) |
 
 Deploying arrives in milestone M0: [deployment.md](docs/operations/deployment.md).
 

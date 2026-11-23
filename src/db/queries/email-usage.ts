@@ -1,4 +1,4 @@
-import { and, eq, gte, lte, sql, sum } from "drizzle-orm";
+import { and, gte, lte, sql, sum } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { emailUsage } from "@/db/schema";
@@ -30,9 +30,4 @@ export async function incrementSignInEmails(now: Date, perDay: number, perMonth:
       });
     return true;
   });
-}
-
-export async function selectSignInEmailsSent(day: string): Promise<number> {
-  const [row] = await getDb().select({ count: emailUsage.count }).from(emailUsage).where(eq(emailUsage.day, day));
-  return row?.count ?? 0;
 }

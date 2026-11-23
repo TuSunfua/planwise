@@ -7,7 +7,6 @@ const SAMPLE = [
   { title: "Go for a walk", time: "17:30", done: false },
 ];
 
-// Decoration: a picture of the product made of tokens, so it needs no image and follows the theme.
 export function DayPreview() {
   return (
     <div

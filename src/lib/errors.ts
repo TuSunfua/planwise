@@ -1,12 +1,4 @@
-export const ERROR_CODES = [
-  "unauthenticated",
-  "forbidden",
-  "not_found",
-  "validation",
-  "rate_limited",
-  "unavailable",
-] as const;
-export type ErrorCode = (typeof ERROR_CODES)[number];
+export type ErrorCode = "unauthenticated" | "forbidden" | "not_found" | "validation" | "rate_limited" | "unavailable";
 
 // The message is for logs. The UI picks its text from the code and the field reasons.
 export abstract class AppError extends Error {

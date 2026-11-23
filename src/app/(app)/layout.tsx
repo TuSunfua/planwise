@@ -9,7 +9,7 @@ async function SignedInAccount() {
   return account && <AccountMenu account={account} />;
 }
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <header className="flex min-h-[54px] items-center justify-between gap-4 border-b bg-sidebar px-4">

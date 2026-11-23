@@ -32,7 +32,6 @@ interface Config {
   isLocal: boolean;
 }
 
-// The only reader of process.env.
 export function getConfig(): Config {
   const parsed = environmentSchema.safeParse(process.env);
   if (!parsed.success) {

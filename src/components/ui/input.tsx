@@ -2,7 +2,7 @@ import { Input as InputPrimitive } from "@base-ui/react/input";
 import { cn } from "cn";
 import type { ComponentProps } from "react";
 
-function Input({ className, ...props }: ComponentProps<"input">) {
+export function Input({ className, ...props }: ComponentProps<"input">) {
   return (
     <InputPrimitive
       data-slot="input"
@@ -14,5 +14,3 @@ function Input({ className, ...props }: ComponentProps<"input">) {
     />
   );
 }
-
-export { Input };

@@ -13,5 +13,4 @@ export const signInSchema = z.object({
     .pipe(z.string().regex(/^\d{6}$/)),
 });
 
-export const SIGN_IN_INTENTS = ["request", "resend", "verify", "restart"] as const;
-export const signInIntentSchema = z.enum(SIGN_IN_INTENTS);
+export const signInIntentSchema = z.enum(["request", "resend", "verify", "restart"]);

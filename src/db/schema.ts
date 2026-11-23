@@ -13,6 +13,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { ROLES } from "@/lib/permissions";
+
 const instant = (name: string) => timestamp(name, { withTimezone: true, mode: "date" });
 const timestamps = {
   createdAt: instant("created_at").notNull(),
@@ -108,7 +110,7 @@ export const projectMembers = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    role: text("role", { enum: ["owner"] }).notNull(),
+    role: text("role", { enum: ROLES }).notNull(),
     ...timestamps,
   },
   (table) => [

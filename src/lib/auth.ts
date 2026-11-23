@@ -78,20 +78,16 @@ export async function createSignInCode(email: string): Promise<string> {
     try {
       return await getAuth().api.createVerificationOTP({ body: { email, type: "sign-in" } });
     } catch (error) {
-      if (!isUniqueViolation(error) || attempt >= AUTH.codesPerEmailPerHour) throw error;
+      if (!isCodeConflict(error) || attempt >= AUTH.codesPerEmailPerHour) throw error;
     }
   }
 }
 
-function isUniqueViolation(error: unknown): boolean {
+// Also true when a wrong guess puts its code back after a new code was sent meanwhile.
+export function isCodeConflict(error: unknown): boolean {
   const cause =
     error instanceof DrizzleQueryError
       ? (error.cause as { code?: string; constraint?: string } | undefined)
       : undefined;
   return cause?.code === "23505" && cause.constraint === "verifications_identifier_unique";
-}
-
-// A wrong guess puts the code back, which the unique index refuses if a new code was sent meanwhile.
-export function isCodeReplaced(error: unknown): boolean {
-  return isUniqueViolation(error);
 }
